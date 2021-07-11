@@ -8,7 +8,7 @@ from market_data_feed.market_data_feed_client import MarketDataFeedClient
 from market_data_feed import time_util
 
 logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG
+    format='%(asctime)s - %(name)10s - %(levelname)7s - %(message)s', level=logging.DEBUG
 )
 
 app = Flask(__name__)
