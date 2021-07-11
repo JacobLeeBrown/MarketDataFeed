@@ -7,6 +7,7 @@
 
 import json
 import time
+import logging
 from threading import Thread
 from websocket import create_connection, WebSocketConnectionClosedException
 
@@ -99,19 +100,19 @@ class WebSocketClient(object):
 
     def on_open(self):
         if self.should_print:
-            print("-- Subscribed! --\n")
+            logging.debug("-- Subscribed! --\n")
 
     def on_close(self):
         if self.should_print:
-            print("\n-- Socket Closed --")
+            logging.debug("\n-- Socket Closed --")
 
     def on_message(self, msg):
         if self.should_print:
-            print(msg)
+            logging.debug(msg)
         if self.message_queue:
             self.message_queue.append(msg)
 
     def on_error(self, e, data=None):
         self.error = e
         self.stop = True
-        print("{} - data: {}".format(e, data))
+        logging.error("{} - data: {}".format(e, data))

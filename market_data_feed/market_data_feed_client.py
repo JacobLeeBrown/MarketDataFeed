@@ -9,6 +9,7 @@
 import sys
 import time
 import copy
+import logging
 from . import websocket_client as wc
 from .order_book import OrderBook
 from decimal import Decimal as D
@@ -41,7 +42,7 @@ class MarketDataFeedClient(wc.WebSocketClient):
             self.message_type_count[msg['type']] += 1
             self.order_book.handle_event(msg)
             if self.should_print:
-                print(self.get_inside_levels_printout(self.level_count) + "\n")
+                logging.debug(self.get_inside_levels_printout(self.level_count) + "\n")
         self.total_message_count += 1
 
     def get_inside_levels_printout(self, level_count):
@@ -104,6 +105,7 @@ class MarketDataFeedClient(wc.WebSocketClient):
         return output[:-1]
 
 
+# Main method to allow for direct interaction without API layer
 def main():
 
     mdf_client = MarketDataFeedClient()
@@ -111,10 +113,10 @@ def main():
 
     try:
         while True:
-            print("###\n")
-            print(mdf_client.get_inside_levels_printout(5) + "\n")
-            print("\nTotal Messages = %i, Breakdown = %s\n" %
-                  (mdf_client.total_message_count, str(mdf_client.message_type_count)))
+            logging.info("###\n")
+            logging.info(mdf_client.get_inside_levels_printout(5) + "\n")
+            logging.info("\nTotal Messages = %i, Breakdown = %s\n" %
+                         (mdf_client.total_message_count, str(mdf_client.message_type_count)))
             time.sleep(5)
     except KeyboardInterrupt:
         mdf_client.close()
