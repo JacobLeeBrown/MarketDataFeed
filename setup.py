@@ -6,7 +6,7 @@ with open('README.rst') as f:
     readme = f.read()
 
 setup(
-    name='MarketDataFeed',
+    name='MarketDataFeedAPI',
     version='1.0.0',
     description='Simple Market Feed Web App',
     long_description=readme,
