@@ -1,3 +1,8 @@
+# api.py
+# original author: Jacob Brown
+#
+#
+# Main module for this project. RESTful API for interfacing with underlying market feed client.
 
 import logging
 import datetime
