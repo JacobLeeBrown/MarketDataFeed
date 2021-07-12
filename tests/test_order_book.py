@@ -10,7 +10,7 @@ class TestOrderBook(unittest.TestCase):
     ###################
 
     def test_open_sell_new_price_levels(self):
-        target = ob.OrderBook(book_size=2)
+        target = ob.OrderBook(max_levels=2)
 
         # Sub case: Completely empty order book
 
@@ -45,7 +45,7 @@ class TestOrderBook(unittest.TestCase):
                                        expected_bid_ids, expected_worst_ask_price, expected_worst_bid_price)
 
     def test_open_sell_same_price_levels(self):
-        target = ob.OrderBook(book_size=2)
+        target = ob.OrderBook(max_levels=2)
         target.best_ask_levels = {"1.00": (D("1.005"), {"1"}), "2.00": (D("0.5"), {"2"})}
         target.best_bid_levels = {}
         target.ask_ids = {"1": ("1.00", D("1.005")), "2": ("2.00", D("0.5"))}
@@ -71,7 +71,7 @@ class TestOrderBook(unittest.TestCase):
                                        expected_bid_ids, expected_worst_ask_price, expected_worst_bid_price)
 
     def test_open_sell_full_book(self):
-        target = ob.OrderBook(book_size=2)
+        target = ob.OrderBook(max_levels=2)
         target.best_ask_levels = {"1.00": (D("2.01"), {"1", "3"}), "2.00": (D("1.0"), {"2", "4"})}
         target.best_bid_levels = {}
         target.ask_ids = {"1": ("1.00", D("1.005")), "2": ("2.00", D("0.5")), "3": ("1.00", D("1.005")), "4": ("2.00", D("0.5"))}
@@ -110,7 +110,7 @@ class TestOrderBook(unittest.TestCase):
                                        expected_bid_ids, expected_worst_ask_price, expected_worst_bid_price)
 
     def test_open_buy_new_price_levels(self):
-        target = ob.OrderBook(book_size=2)
+        target = ob.OrderBook(max_levels=2)
 
         # Sub case: Completely empty order book
 
@@ -145,7 +145,7 @@ class TestOrderBook(unittest.TestCase):
                                        expected_bid_ids, expected_worst_ask_price, expected_worst_bid_price)
 
     def test_open_buy_same_price_levels(self):
-        target = ob.OrderBook(book_size=2)
+        target = ob.OrderBook(max_levels=2)
         target.best_ask_levels = {}
         target.best_bid_levels = {"1.00": (D("1.005"), {"1"}), "2.00": (D("0.5"), {"2"})}
         target.ask_ids = {}
@@ -171,7 +171,7 @@ class TestOrderBook(unittest.TestCase):
                                        expected_bid_ids, expected_worst_ask_price, expected_worst_bid_price)
 
     def test_open_buy_full_book(self):
-        target = ob.OrderBook(book_size=2)
+        target = ob.OrderBook(max_levels=2)
         target.best_ask_levels = {}
         target.best_bid_levels = {"1.00": (D("2.01"), {"1", "3"}), "2.00": (D("1.0"), {"2", "4"})}
         target.ask_ids = {}
@@ -214,7 +214,7 @@ class TestOrderBook(unittest.TestCase):
     ###################
 
     def test_done_order_exists_in_book_and_not_only_order_in_level(self):
-        target = ob.OrderBook(book_size=2)
+        target = ob.OrderBook(max_levels=2)
         target.best_ask_levels = {"10.00": (D("10.00"), {"5", "6"})}
         target.best_bid_levels = {"1.00": (D("2.01"), {"1", "3"}), "2.00": (D("1.0"), {"2", "4"})}
         target.ask_ids = {"5": ("10.00", D("3.5")), "6": ("10.00", D("6.5"))}
@@ -253,7 +253,7 @@ class TestOrderBook(unittest.TestCase):
                                        expected_bid_ids, expected_worst_ask_price, expected_worst_bid_price)
 
     def test_done_order_exists_in_book_and_only_order_in_level(self):
-        target = ob.OrderBook(book_size=2)
+        target = ob.OrderBook(max_levels=2)
         target.best_ask_levels = {"10.00": (D("3.5"), {"5"})}
         target.best_bid_levels = {"1.00": (D("2.01"), {"1", "3"}), "2.00": (D("0.5"), {"4"})}
         target.ask_ids = {"5": ("10.00", D("3.5"))}
@@ -292,7 +292,7 @@ class TestOrderBook(unittest.TestCase):
                                        expected_bid_ids, expected_worst_ask_price, expected_worst_bid_price)
 
     def test_done_order_exists_in_book_and_only_order_in_level_updates_worst_price(self):
-        target = ob.OrderBook(book_size=2)
+        target = ob.OrderBook(max_levels=2)
         target.best_ask_levels = {"5.00": (D("1.0"), {"5"}), "6.00": (D("1.0"), {"6"})}
         target.best_bid_levels = {"1.00": (D("1.0"), {"1"}), "2.00": (D("1.0"), {"2"})}
         target.ask_ids = {"5": ("5.00", D("1.0")), "6": ("6.00", D("1.0"))}
@@ -331,7 +331,7 @@ class TestOrderBook(unittest.TestCase):
                                        expected_bid_ids, expected_worst_ask_price, expected_worst_bid_price)
 
     def test_done_empty_book(self):
-        target = ob.OrderBook(book_size=2)
+        target = ob.OrderBook(max_levels=2)
         target.best_ask_levels = {}
         target.best_bid_levels = {}
         target.ask_ids = {}
@@ -357,7 +357,7 @@ class TestOrderBook(unittest.TestCase):
                                        expected_bid_ids, expected_worst_ask_price, expected_worst_bid_price)
 
     def test_done_order_does_not_exist_in_book(self):
-        target = ob.OrderBook(book_size=2)
+        target = ob.OrderBook(max_levels=2)
         target.best_ask_levels = {"5.00": (D("1.0"), {"5"}), "6.00": (D("1.0"), {"6"})}
         target.best_bid_levels = {"1.00": (D("1.0"), {"1"}), "2.00": (D("1.0"), {"2"})}
         target.ask_ids = {"5": ("5.00", D("1.0")), "6": ("6.00", D("1.0"))}
@@ -385,7 +385,7 @@ class TestOrderBook(unittest.TestCase):
     ####################
 
     def test_match_empty_book(self):
-        target = ob.OrderBook(book_size=2)
+        target = ob.OrderBook(max_levels=2)
         target.best_ask_levels = {}
         target.best_bid_levels = {}
         target.ask_ids = {}
@@ -411,7 +411,7 @@ class TestOrderBook(unittest.TestCase):
                                        expected_bid_ids, expected_worst_ask_price, expected_worst_bid_price)
 
     def test_match_complete_fill(self):
-        target = ob.OrderBook(book_size=2)
+        target = ob.OrderBook(max_levels=2)
         target.best_ask_levels = {"5.00": (D("1.0"), {"5"}), "6.00": (D("1.0"), {"6"})}
         target.best_bid_levels = {"1.00": (D("1.0"), {"1"}), "2.00": (D("1.0"), {"2"})}
         target.ask_ids = {"5": ("5.00", D("1.0")), "6": ("6.00", D("1.0"))}
@@ -450,7 +450,7 @@ class TestOrderBook(unittest.TestCase):
                                        expected_bid_ids, expected_worst_ask_price, expected_worst_bid_price)
 
     def test_match_partial_fill(self):
-        target = ob.OrderBook(book_size=2)
+        target = ob.OrderBook(max_levels=2)
         target.best_ask_levels = {"5.00": (D("1.0"), {"5"}), "6.00": (D("1.0"), {"6"})}
         target.best_bid_levels = {"1.00": (D("1.0"), {"1"}), "2.00": (D("1.0"), {"2"})}
         target.ask_ids = {"5": ("5.00", D("1.0")), "6": ("6.00", D("1.0"))}

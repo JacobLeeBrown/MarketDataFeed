@@ -18,10 +18,16 @@ from decimal import Decimal as D
 class MarketDataFeedClient(wc.WebSocketClient):
 
     def __init__(self,
-                 level_count=5):
+                 level_count=5,  # Number of inside levels to output
+                 max_levels=15,  # Number of inside levels to track in the OrderBook, must be greater than level_count
+                 logging_enabled=False):
+        assert(max_levels >= level_count)
         super().__init__()
-        self.should_print = False
-        self.order_book = OrderBook(book_size=15)
+        self.level_count = level_count
+        self.order_book = OrderBook(max_levels=max_levels)
+        self.logging_enabled = logging_enabled
+
+        # Statistics
         self.message_type_count = {'subscriptions': 0,
                                    'received': 0,
                                    'open': 0,
@@ -30,7 +36,6 @@ class MarketDataFeedClient(wc.WebSocketClient):
                                    'change': 0,
                                    'activate': 0}
         self.total_message_count = 0
-        self.level_count = level_count
 
     def on_open(self):
         self.url = "wss://ws-feed.pro.coinbase.com/"
@@ -41,7 +46,7 @@ class MarketDataFeedClient(wc.WebSocketClient):
         if 'type' in msg:
             self.message_type_count[msg['type']] += 1
             self.order_book.handle_event(msg)
-            if self.should_print:
+            if self.logging_enabled:
                 logging.debug(self.get_inside_levels_printout(self.level_count) + "\n")
         self.total_message_count += 1
 

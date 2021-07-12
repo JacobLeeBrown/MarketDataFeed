@@ -6,7 +6,7 @@ from decimal import Decimal as D
 class TestMarketDataFeedClient(unittest.TestCase):
 
     def test_get_inside_levels_printout_happy_path(self):
-        test_order_book = ob.OrderBook(book_size=3)
+        test_order_book = ob.OrderBook(max_levels=3)
         test_order_book.best_ask_levels = {"5.00": (D("5.0"), {"5"}), "6.00": (D("6.0"), {"6"}), "7.00": (D("7.0"), {"7"})}
         test_order_book.best_bid_levels = {"1.00": (D("1.0"), {"1"}), "2.00": (D("2.0"), {"2"}), "3.00": (D("3.0"), {"3"})}
 
@@ -24,7 +24,7 @@ class TestMarketDataFeedClient(unittest.TestCase):
         self._assertEqualLineByLine(expected, actual)
 
     def test_get_inside_levels_printout_partial_book(self):
-        test_order_book = ob.OrderBook(book_size=3)
+        test_order_book = ob.OrderBook(max_levels=3)
         test_order_book.best_ask_levels = {"5.00": (D("5.0"), {"5"})}
         test_order_book.best_bid_levels = {"1.00": (D("1.0"), {"1"})}
 

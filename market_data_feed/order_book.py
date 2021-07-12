@@ -5,27 +5,40 @@
 # Class for maintaining pertinent data for outputting inside bid and ask levels from the CoinBase Pro Market Feed API.
 
 import json
+import logging
 from decimal import Decimal as D
 
 
 class OrderBook:
 
     def __init__(self,
-                 book_size=5,
-                 should_print=False):
-        self.book_size = book_size
-        self.should_print = should_print
+                 max_levels=5,
+                 logging_enabled=False):
+        # Feature for space efficiency -> only track the best <max_levels> levels
+        # Also has minor impact on time efficiency for whenever the levels need to be sorted
+        self.max_levels = max_levels
+
+        self.logging_enabled = logging_enabled
+
+        # Dict<String, Pair<Decimal, Set<String>>>
+        # {Level Price : ( Level Quantity , { Order Ids } ) }
+        # Ex: {"100.00" : ( 1.5, {"a1", "b2", "c3"} ) }
         self.best_ask_levels = {}
         self.best_bid_levels = {}
+
+        # Dict<String, Pair<String, Decimal>>
+        # {Order Id : ( Order Price , Order Quantity ) }
+        # Ex: {"a1" : ( "100.00", 0.5 ) }
         self.ask_ids = {}
         self.bid_ids = {}
+
         self.worst_ask_price = D('-1.0')
         self.worst_bid_price = D('-1.0')
 
     def handle_event(self, event):
         if 'type' not in event:
-            if self.should_print:
-                print('Event does not have \'type\' key: ' + json.dumps(event, indent=4))
+            if self.logging_enabled:
+                logging.debug('Event does not have \'type\' key: ' + json.dumps(event, indent=4))
             return
 
         event_type = event['type']
@@ -42,8 +55,8 @@ class OrderBook:
         elif event_type == 'activate':
             self._activate(event)
         else:
-            if self.should_print:
-                print('Unrecognized event type: ' + event_type)
+            if self.logging_enabled:
+                logging.debug('Unrecognized event type: ' + event_type)
 
     # Event Type Handlers
 
@@ -61,7 +74,7 @@ class OrderBook:
         if 'sell' == order_side:
             if order_price not in self.best_ask_levels:
 
-                if len(self.best_ask_levels) < self.book_size:
+                if len(self.best_ask_levels) < self.max_levels:
                     # Our book is not full, so simply add the new level and update class variables
                     self.best_ask_levels[order_price] = (order_size, {order_id})
                     self.ask_ids[order_id] = (order_price, order_size)
@@ -91,7 +104,7 @@ class OrderBook:
         elif 'buy' == order_side:
             if order_price not in self.best_bid_levels:
 
-                if len(self.best_bid_levels) < self.book_size:
+                if len(self.best_bid_levels) < self.max_levels:
                     # Our book is not full, so simply add the new level and update class variables
                     self.best_bid_levels[order_price] = (order_size, {order_id})
                     self.bid_ids[order_id] = (order_price, order_size)

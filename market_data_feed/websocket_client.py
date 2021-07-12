@@ -19,7 +19,6 @@ class WebSocketClient(object):
             products=None,
             message_type="subscribe",
             message_queue=None,
-            should_print=True,
             channels=None):
         self.url = url
         self.products = products
@@ -30,7 +29,6 @@ class WebSocketClient(object):
         self.ws = None
         self.thread = None
         self.keepAlive = None
-        self.should_print = should_print
         self.message_queue = message_queue
 
     def start(self):
@@ -99,16 +97,13 @@ class WebSocketClient(object):
         self.thread.join()
 
     def on_open(self):
-        if self.should_print:
-            logging.debug("-- Subscribed! --\n")
+        logging.debug("-- Socket Opened --")
 
     def on_close(self):
-        if self.should_print:
-            logging.debug("\n-- Socket Closed --")
+        logging.debug("-- Socket Closed --")
 
     def on_message(self, msg):
-        if self.should_print:
-            logging.debug(msg)
+        logging.debug(msg)
         if self.message_queue:
             self.message_queue.append(msg)
 
